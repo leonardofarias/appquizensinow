@@ -11,7 +11,7 @@
     <class>br.com.quizEnsino.model.StatisticsMultiPlayer</class>
     
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.3.112.1:5432/quizensino"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.3.112.2:5432/quizensino"/>
       <property name="javax.persistence.jdbc.user" value="admin79rpllz"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value="38A6Gw36LXtl"/>
