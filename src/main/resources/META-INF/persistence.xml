@@ -11,9 +11,13 @@
     <class>br.com.quizEnsino.model.StatisticsMultiPlayer</class>
     
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
-	  <property name="hibernate.show_sql" value="true"/>
-    </properties>
+		<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.0.0.1:49863/quizensino"/>
+		<property name="javax.persistence.jdbc.user" value="adminfd2l3za"/>
+		<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+		<property name="javax.persistence.jdbc.password" value="L_YpCQ2-LwXX"/>
+		<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+		<property name="hibernate.show_sql" value="true"/>
+	</properties>
 	 
 	</persistence-unit>
 </persistence>
