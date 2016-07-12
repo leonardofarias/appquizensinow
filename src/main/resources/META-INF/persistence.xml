@@ -17,6 +17,6 @@
       <property name="javax.persistence.jdbc.password" value="38A6Gw36LXtl"/>
       <property name="eclipselink.logging.level" value="FINE"/>
     </properties>
-	
+	 
 	</persistence-unit>
 </persistence>
