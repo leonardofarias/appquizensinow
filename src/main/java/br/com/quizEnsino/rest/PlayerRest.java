@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.jboss.resteasy.annotations.GZIP;
 
 import com.google.gson.Gson;
 
@@ -28,7 +27,6 @@ import br.com.quizEnsino.model.Player;
 public class PlayerRest {
 
 	@PUT
-	@GZIP
     @PermitAll
 	@Path("/save")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -63,7 +61,6 @@ public class PlayerRest {
 	}
 	
 	@GET
-    @GZIP
     @PermitAll
     @Path("/get")
     @Produces("application/json")

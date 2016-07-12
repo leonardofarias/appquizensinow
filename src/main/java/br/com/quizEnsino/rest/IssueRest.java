@@ -11,8 +11,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.jboss.resteasy.annotations.GZIP;
-
 import com.google.gson.Gson;
 
 import br.com.quizEnsino.bd.IssueBD;
@@ -20,11 +18,9 @@ import br.com.quizEnsino.dto.IssueDTO;
 import br.com.quizEnsino.model.Issue;
 
 @Path("/issues")
-public class IssueRest {
-	
+public class IssueRest {	
 
 	@GET
-	@GZIP
     @PermitAll
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
