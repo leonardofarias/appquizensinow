@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="appquizensinowildfly">
-	<provider>org.hibernate.ejb.HibernatePersistence</provider>
+	<persistence-unit name="appquizensinowildfly" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
     
     <class>br.com.quizEnsino.model.Challenge</class>
     <class>br.com.quizEnsino.model.Issue</class>
@@ -11,12 +11,12 @@
     <class>br.com.quizEnsino.model.StatisticsMultiPlayer</class>
     
     <properties>
-		<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.3.112.2:5432/quizensino"/>
-		<property name="javax.persistence.jdbc.user" value="admin79rpllz"/>
-		<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-		<property name="javax.persistence.jdbc.password" value="38A6Gw36LXtl"/>
 		<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 		<property name="hibernate.show_sql" value="true"/>
+		<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+		<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.3.112.2:5432/quizensino"/>
+		<property name="javax.persistence.jdbc.user" value="admin79rpllz"/>
+		<property name="javax.persistence.jdbc.password" value="38A6Gw36LXtl"/>
 	</properties>
 	 
 	</persistence-unit>
