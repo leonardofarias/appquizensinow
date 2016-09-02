@@ -2,10 +2,10 @@ package br.com.quizEnsino.rest;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -21,16 +21,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.gson.Gson;
 
-import br.com.quizEnsino.bd.IssueBD;
-import br.com.quizEnsino.bd.PlayerBD;
-import br.com.quizEnsino.bd.StatisticsOnePlayerBD;
-import br.com.quizEnsino.model.Issue;
-import br.com.quizEnsino.model.Player;
 import br.com.quizEnsino.model.StatisticsOnePlayer;
+import br.com.quizEnsino.rn.StatisticsOnePlayerRN;
 
 @Path("/statistics-one-player")
 public class StatisticsOnePlayerRest {
 
+	@EJB
+	StatisticsOnePlayerRN statisticsOnePlayerRN;
+	
 	@PUT
     @PermitAll
 	@Path("/save")
@@ -42,21 +41,7 @@ public class StatisticsOnePlayerRest {
 		
 		try {
 			
-			Integer id = Integer.parseInt(idIssue);
-			Boolean check = Boolean.parseBoolean(checkAnswer);
-			
-			PlayerBD playerBD = new PlayerBD();
-			IssueBD issueBD = new IssueBD();
-			StatisticsOnePlayerBD staBD = new StatisticsOnePlayerBD();
-			
-			Player player = playerBD.getByNamePlayer(namePlayer);
-			Issue issue = issueBD.get(id);
-			
-			StatisticsOnePlayer statisticsOnePlayer = new StatisticsOnePlayer();
-			statisticsOnePlayer.setPlayer(player);
-			statisticsOnePlayer.setIssue(issue);
-			statisticsOnePlayer.setCorrect(check);
-			staBD.salvar(statisticsOnePlayer);
+			statisticsOnePlayerRN.save(idIssue, namePlayer, checkAnswer);
 				
 			rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok")), MediaType.APPLICATION_JSON);
 			
@@ -77,21 +62,11 @@ public class StatisticsOnePlayerRest {
 		
 		try {
 			
-			PlayerBD playerBD = new PlayerBD();
-			Player player = playerBD.getByNamePlayer(namePlayer);
-			
-			StatisticsOnePlayerBD statisticsOnePlayerBD = new StatisticsOnePlayerBD();
-			int corrects = statisticsOnePlayerBD.buscarQtdQuestoes(player, true);
-			int errors = statisticsOnePlayerBD.buscarQtdQuestoes(player, false);
-			
-			List<Integer> listaAcertosErros = new ArrayList<Integer>();
-			listaAcertosErros.add(corrects);
-			listaAcertosErros.add(errors);
+			List<Integer> listaAcertosErros = statisticsOnePlayerRN.findQtdQuestionsRightError(namePlayer);
 			
 			rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok", listaAcertosErros)), MediaType.APPLICATION_JSON);
 		} catch (Exception e) {
-			String msg = "Um erro inesperado aconteceu, sinto muito!";
-		    rb = Response.status(500).entity(ErrorsResult.errors(500, msg));
+		    rb = Response.status(500).entity(ErrorsResult.errors(500, e.getMessage()));
 		}
 		return rb.build();
 	}

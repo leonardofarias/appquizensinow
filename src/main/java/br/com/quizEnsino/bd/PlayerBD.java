@@ -5,46 +5,39 @@
  */
 package br.com.quizEnsino.bd;
 
-import br.com.quizEnsino.model.Player;
-
 import java.util.List;
+
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import br.com.quizEnsino.model.Player;
 
 /**
  * 
  * @author MacLeo
  */
+@Stateless
 public class PlayerBD {
-	private EntityManager em;
-	Player issue = new Player();
+	
+	@PersistenceContext(name = "quizPersistenceUnit")
+    private EntityManager em;
 
-	public PlayerBD() {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("appquizensinowildfly");
-		em = emf.createEntityManager();
+	public void save(Player player) {
+		em.persist(player);
 	}
 
-	public void salvar(Player player) {
-		em.getTransaction().begin();
-		em.merge(player);
-		em.getTransaction().commit();
-	}
-
-	public void excluir(Player player) {
-		em.getTransaction().begin();
-		em.remove(em.find(Player.class, player.getEmail()));
-		em.getTransaction().commit();
+	public void remove(String email) {
+		em.remove(em.find(Player.class, email));
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Player> listarTudo() {
-		Query query = em.createNamedQuery("Player.findAll");
-		return query.getResultList();
+	public List<Player> getAll() {
+		return em.createNamedQuery("Player.findAll").getResultList();
 	}
 
-	public Player get(String email) {
+	public Player getByEmail(String email) {
 		try {
 			Query query = em.createNamedQuery("Player.findByEmail");
 			query.setParameter("email", email);
@@ -54,7 +47,7 @@ public class PlayerBD {
 		}
 	}
 	
-	public Player getByNamePlayer(String namePlayer) {
+	public Player getByName(String namePlayer) {
 		try {
 			Query query = em.createNamedQuery("Player.findByNamePlayer");
 			query.setParameter("namePlayer", namePlayer);
@@ -64,7 +57,7 @@ public class PlayerBD {
 		}
 	}
 	
-	public Player getUser(String email, String password) {
+	public Player getByUser(String email, String password) {
 		try {
 			Query query = em.createNamedQuery("Player.findByUser");
 			query.setParameter("email", email);
@@ -73,10 +66,6 @@ public class PlayerBD {
 		} catch (Exception e) {
 			return null;
 		}
-	}
-
-	public String pesquisarPorId(String value) {
-		return issue.getEmail();
 	}
 
 }

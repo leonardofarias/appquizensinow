@@ -5,57 +5,48 @@
  */
 package br.com.quizEnsino.bd;
 
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import br.com.quizEnsino.model.Player;
 import br.com.quizEnsino.model.StatisticsMultiPlayer;
-
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
 
 /**
  * 
  * @author MacLeo
  */
+@Stateless
 public class StatisticsMultiPlayerBD {
-    private EntityManager em;
-    StatisticsMultiPlayer statisticsMultiPlayer = new StatisticsMultiPlayer();
-
-    public StatisticsMultiPlayerBD() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("appquizensinowildfly");
-        em = emf.createEntityManager();
-    }
     
-    public void salvar(StatisticsMultiPlayer statisticsMultiPlayer) {
-        em.getTransaction().begin();
-        em.merge(statisticsMultiPlayer);
-        em.getTransaction().commit();
+	@PersistenceContext(name = "quizPersistenceUnit")
+    private EntityManager em;
+    
+    public void save(StatisticsMultiPlayer statisticsMultiPlayer) {
+        em.persist(statisticsMultiPlayer);
     }
 
-    public void excluir(StatisticsMultiPlayer statisticsMultiPlayer) {
-        em.getTransaction().begin();
-        em.remove(em.find(StatisticsMultiPlayerBD.class, statisticsMultiPlayer.getIdMultiPlayer()));
-        em.getTransaction().commit();
+    public void remove(Integer id) {
+        em.remove(em.find(StatisticsMultiPlayer.class, id));
     }
     
     @SuppressWarnings("unchecked")
-	public List<StatisticsMultiPlayerBD> listarTudo(){
-        Query query = em.createNamedQuery("StatisticsMultiPlayer.findAll");
-        return query.getResultList();
+	public List<StatisticsMultiPlayerBD> getAll(){
+        return em.createNamedQuery("StatisticsMultiPlayer.findAll").getResultList();
     }
     
-	public Integer buscarQtdPartidas(Player player, Boolean victory){
+	public Integer findQtdMatchesWinsLosses(Player player, Boolean victory){
         Query query = em.createNamedQuery("StatisticsMultiPlayer.findAnswersCorrect");
         query.setParameter("player", player);
         query.setParameter("victory", victory);
         return query.getResultList().size();
     }
 
-    public StatisticsMultiPlayerBD get(Integer id) {
-    	Query query = em.createNamedQuery("StatisticsMultiPlayer.findByIdStatisticsMultiPlayer");
-    	query.setParameter("id_StatisticsMultiPlayer",id);
-    	return (StatisticsMultiPlayerBD) query.getSingleResult();
+    public StatisticsMultiPlayer find(Integer id) {
+    	return em.find(StatisticsMultiPlayer.class, id);
     }
     
 }

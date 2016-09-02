@@ -1,9 +1,8 @@
 package br.com.quizEnsino.rest;
 
 
-import java.util.List;
-
 import javax.annotation.security.PermitAll;
+import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -13,13 +12,15 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import com.google.gson.Gson;
 
-import br.com.quizEnsino.bd.IssueBD;
 import br.com.quizEnsino.dto.IssueDTO;
-import br.com.quizEnsino.model.Issue;
+import br.com.quizEnsino.rn.IssueRN;
 
 @Path("/issues")
 public class IssueRest {	
 
+	@EJB
+	IssueRN issueRN;
+	
 	@GET
     @PermitAll
 	@Path("/get")
@@ -30,13 +31,7 @@ public class IssueRest {
 		
 		try {
 			
-			IssueBD issueBD = new IssueBD();
-			List<Issue> list = issueBD.listarTudo();
-			int i = (int) ((int) list.size()*Math.random());
-			
-			Issue issue = list.get(i);
-			
-			IssueDTO issueResult = new IssueDTO(issue);
+			IssueDTO issueResult = issueRN.getRandomIssue();
 			
 			rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok", issueResult)), MediaType.APPLICATION_JSON);
 			

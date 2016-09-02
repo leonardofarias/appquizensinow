@@ -5,57 +5,48 @@
  */
 package br.com.quizEnsino.bd;
 
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import br.com.quizEnsino.model.Player;
 import br.com.quizEnsino.model.StatisticsOnePlayer;
-
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
 
 /**
  * 
  * @author MacLeo
  */
+@Stateless
 public class StatisticsOnePlayerBD {
+	
+	@PersistenceContext(name = "quizPersistenceUnit")
     private EntityManager em;
-    StatisticsOnePlayer statisticsOnePlayer = new StatisticsOnePlayer();
 
-    public StatisticsOnePlayerBD() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("appquizensinowildfly");
-        em = emf.createEntityManager();
-    }
-    
-    public void salvar(StatisticsOnePlayer statisticsOnePlayer) {
-        em.getTransaction().begin();
-        em.merge(statisticsOnePlayer);
-        em.getTransaction().commit();
+    public void save(StatisticsOnePlayer statisticsOnePlayer) {
+        em.persist(statisticsOnePlayer);
     }
 
-    public void excluir(StatisticsOnePlayer statisticsOnePlayer) {
-        em.getTransaction().begin();
-        em.remove(em.find(StatisticsOnePlayer.class, statisticsOnePlayer.getIdOnePlayer()));
-        em.getTransaction().commit();
+    public void remove(Integer id) {
+        em.remove(em.find(StatisticsOnePlayer.class, id));
     }
     
     @SuppressWarnings("unchecked")
-	public List<StatisticsOnePlayer> listarTudo(){
-        Query query = em.createNamedQuery("StatisticsOnePlayer.findAll");
-        return query.getResultList();
+	public List<StatisticsOnePlayer> getAll(){
+        return em.createNamedQuery("StatisticsOnePlayer.findAll").getResultList();
     }
     
-	public Integer buscarQtdQuestoes(Player player, Boolean correct){
+	public Integer findByQtdQuestions(Player player, Boolean correct){
         Query query = em.createNamedQuery("StatisticsOnePlayer.findAnswersCorrect");
         query.setParameter("player", player);
         query.setParameter("correct", correct);
         return query.getResultList().size();
     }
 
-    public StatisticsOnePlayer get(Integer id) {
-    	Query query = em.createNamedQuery("StatisticsOnePlayer.findByIdStatisticsOnePlayer");
-    	query.setParameter("id_StatisticsOnePlayer",id);
-    	return (StatisticsOnePlayer) query.getSingleResult();
+    public StatisticsOnePlayer find(Integer id) {
+    	return em.find(StatisticsOnePlayer.class, id);
     }
     
 }

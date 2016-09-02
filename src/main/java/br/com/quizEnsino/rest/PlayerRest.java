@@ -4,6 +4,7 @@ package br.com.quizEnsino.rest;
 import java.io.IOException;
 
 import javax.annotation.security.PermitAll;
+import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -19,13 +20,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.gson.Gson;
 
-import br.com.quizEnsino.bd.PlayerBD;
+import br.com.quizEnsino.rn.PlayerRN;
 import br.com.quizEnsino.dto.PlayerDTO;
 import br.com.quizEnsino.model.Player;
 
 @Path("/player")
 public class PlayerRest {
 
+	@EJB
+	PlayerRN playerRN;
+	
 	@PUT
     @PermitAll
 	@Path("/save")
@@ -36,26 +40,14 @@ public class PlayerRest {
 		try {
 			
 			Player player = validate(json);
-			PlayerBD playerBD = new PlayerBD();
 			
-			if(playerBD.get(player.getEmail()) != null){
-				rb = Response.ok(new Gson().toJson(ErrorsResult.errors(500,"Já existe um usuário com o email " + player.getEmail() + "." )), MediaType.APPLICATION_JSON);
-				return rb.build();
-			}else{
-				String namePlayer = player.getEmail();
-				String[] parts = namePlayer.split("@");
-				player.setNamePlayer(parts[0]);
-				playerBD.salvar(player);
-			}
-			
-			PlayerDTO playerResult = new PlayerDTO(player);
+			PlayerDTO playerResult = playerRN.save(player);
 			
 			rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok", playerResult)), MediaType.APPLICATION_JSON);
 			
 			return rb.build();	
 		} catch (Exception e) {
-			String msg = "Um erro inesperado aconteceu, sinto muito!";
-		    rb = Response.status(500).entity(ErrorsResult.errors(500, msg));
+		    rb = Response.status(500).entity(ErrorsResult.errors(500, e.getMessage()));
 		}
 		return rb.build();
 	}
@@ -69,21 +61,13 @@ public class PlayerRest {
 			ResponseBuilder rb = null;
 		
 		try {
-			
-			PlayerBD playerBD = new PlayerBD();
-			Player player = playerBD.getUser(email, password);
-			
-			if(player != null){
-				PlayerDTO playerResult = new PlayerDTO(player);				
-				rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok", playerResult)), MediaType.APPLICATION_JSON);
-			}else{
-				rb = Response.ok(new Gson().toJson(ErrorsResult.errors(500,"Usuário ou senha não encontrado." )), MediaType.APPLICATION_JSON);
-			}
-			
+						
+			PlayerDTO playerResult = playerRN.getUser(email, password);
+						
+			rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok", playerResult)), MediaType.APPLICATION_JSON);
 			return rb.build();	
 		} catch (Exception e) {
-			String msg = "Um erro inesperado aconteceu, sinto muito!";
-		    rb = Response.status(500).entity(ErrorsResult.errors(500, msg));
+		    rb = Response.status(500).entity(ErrorsResult.errors(500, e.getMessage()));
 		}
 		return rb.build();
 	}

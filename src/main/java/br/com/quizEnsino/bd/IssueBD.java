@@ -5,48 +5,36 @@
  */
 package br.com.quizEnsino.bd;
 
-import br.com.quizEnsino.model.Issue;
-import java.util.List;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
+import javax.persistence.PersistenceContext;
+
+import br.com.quizEnsino.model.Issue;
 
 /**
  * 
  * @author MacLeo
  */
+@Stateless
 public class IssueBD {
+	
+	@PersistenceContext(name = "quizPersistenceUnit")
     private EntityManager em;
-    Issue issue = new Issue();
+    
+    public void save(Issue issue) {
+        em.persist(issue);
+    }
 
-    public IssueBD() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("appquizensinowildfly");
-        em = emf.createEntityManager();
+    public void remove(Integer id) {
+        em.remove(em.find(Issue.class, id));
     }
     
-    public void salvar(Issue issue) {
-        em.getTransaction().begin();
-        em.merge(issue);
-        em.getTransaction().commit();
+	public int getAll(){
+        return em.createNamedQuery("Issue.findAll").getResultList().size();
     }
 
-    public void excluir(Issue issue) {
-        em.getTransaction().begin();
-        em.remove(em.find(Issue.class, issue.getIdIssue()));
-        em.getTransaction().commit();
-    }
-    
-    @SuppressWarnings("unchecked")
-	public List<Issue> listarTudo(){
-        Query query = em.createNamedQuery("Issue.findAll");
-        return query.getResultList();
-    }
-
-    public Issue get(Integer id) {
-    	Query query = em.createNamedQuery("Issue.findByIdIssue");
-    	query.setParameter("idIssue",id);
-    	return (Issue) query.getSingleResult();
+    public Issue find(Integer id) {
+    	return em.find(Issue.class, id);
     }
     
 }

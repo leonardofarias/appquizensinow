@@ -2,10 +2,10 @@ package br.com.quizEnsino.rest;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -20,14 +20,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.gson.Gson;
 
-import br.com.quizEnsino.bd.PlayerBD;
-import br.com.quizEnsino.bd.StatisticsMultiPlayerBD;
-import br.com.quizEnsino.model.Player;
 import br.com.quizEnsino.model.StatisticsOnePlayer;
+import br.com.quizEnsino.rn.StatisticsMultiPlayerRN;
 
 @Path("/statistics-multi-player")
 public class StatisticsMultiPlayerRest {
 
+	@EJB
+	StatisticsMultiPlayerRN statisticsMultiPlayerRN;
+	
 	@GET
     @PermitAll
     @Path("/get")
@@ -37,18 +38,9 @@ public class StatisticsMultiPlayerRest {
 		
 		try {
 			
-			PlayerBD playerBD = new PlayerBD();
-			Player player = playerBD.getByNamePlayer(namePlayer);
+			List<Integer> listMatchesWinsLosses = statisticsMultiPlayerRN.findQtdMatchesWinsLosses(namePlayer);
 			
-			StatisticsMultiPlayerBD statisticsOnePlayerBD = new StatisticsMultiPlayerBD();
-			int wins = statisticsOnePlayerBD.buscarQtdPartidas(player, true);
-			int losses = statisticsOnePlayerBD.buscarQtdPartidas(player, false);
-			
-			List<Integer> listaAcertosErros = new ArrayList<Integer>();
-			listaAcertosErros.add(wins);
-			listaAcertosErros.add(losses);
-			
-			rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok", listaAcertosErros)), MediaType.APPLICATION_JSON);
+			rb = Response.ok(new Gson().toJson(SuccessResult.success(200, "ok", listMatchesWinsLosses)), MediaType.APPLICATION_JSON);
 		} catch (Exception e) {
 			String msg = "Um erro inesperado aconteceu, sinto muito!";
 		    rb = Response.status(500).entity(ErrorsResult.errors(500, msg));

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="appquizensinowildfly" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+	<persistence-unit name="quizPersistenceUnit" transaction-type="JTA">
+	<jta-data-source>java:jboss/datasources/QuizEnsinoDS</jta-data-source>
     
     <class>br.com.quizEnsino.model.Challenge</class>
     <class>br.com.quizEnsino.model.Issue</class>
@@ -10,13 +10,19 @@
     <class>br.com.quizEnsino.model.StatisticsOnePlayer</class>
     <class>br.com.quizEnsino.model.StatisticsMultiPlayer</class>
     
-    <properties>		
-		<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.3.112.2:5432/appquizensinowildfly"/>
-		<property name="javax.persistence.jdbc.user" value="admin79rpllz"/>
-		<property name="javax.persistence.jdbc.password" value="38A6Gw36LXtl"/>
-		<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+    <properties>	
+		<property name="javax.persistence.schema-generation.create-source" value="metadata" />
+		<property name="javax.persistence.schema-generation.drop-source" value="metadata" />
+		<property name="javax.persistence.sql-load-script-source" value="META-INF/createDDL.sql" />			
+		
 		<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-		<property name="hibernate.show_sql" value="true"/>
+		<property name="hibernate.show_sql" value="true" />
+		<property name="hibernate.format_sql" value="true" />
+		<property name="hibernate.hbm2ddl.auto" value="update"/> 
+		<property name="hibernate.connection.characterEncoding" value="UTF-8" />
+		<property name="hibernate.connection.useUnicode" value="true" />
+		<property name="hibernate.connection.CharSet" value="utf8" />
+    	
 	</properties>
 	 
 	</persistence-unit>
